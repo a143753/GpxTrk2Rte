@@ -1,6 +1,7 @@
 module Main where
 
 import Text.XML.HXT.Core
+import Data.String.Utils
 import Lib
 
 main :: IO ()
@@ -9,16 +10,22 @@ main = do
 --  print res1
 --  res2 <- runX (plotTree "/home/funamoto/Brevet/BRM922_PC1_rt.gpx"  "BRM922_PC1_tr.tree")
 --  print res2
-  res3 <- runX (readTrk "/home/funamoto/Brevet/BRM922_PC1_dcm.gpx")
-  let res4 = map tplToTrkPt res3
-      res5 = trkPtToRtePt res4
-  print $ show $ res4!!0
-  print $ show $ res5!!0
-  print $ length res4
+
+  let doc = readDocument [withValidate no] "/home/funamoto/Brevet/BRM922_PC1.gpx"
+
+  nm <- runX (doc >>> getTrkName)
+  ts <- runX (doc >>> getTrkSeg)
+
+  let name = strip $ nm!!0
+      trks = map tplToTrkPt ts
+      rtes = trkPtToRtePt trks
+      decs = deci 250 rtes
+
+--  let xys  = map (\a -> (rteLat a, rteLon a) ) rtes
+  mapM_ print decs
+      
   runX (
-        root [] [writeRte res5]
---        readDocument [] "/home/funamoto/Brevet/BRM922_PC1_rt.gpx"
+        root [] [writeRte name decs]
         >>>
---        writeDocument [withIndent yes] "/home/funamoto/BRM922_PC1_dcm.gpx")
-        writeDocument [withIndent yes] "/home/funamoto/BRM922_PC1_dcm.gpx")
+        writeDocument [withIndent yes] "/home/funamoto/BRM922_PC1_rt.gpx")
   return ()

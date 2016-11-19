@@ -26,6 +26,7 @@ executable GpxTrk2Rte-exe
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , hxt
+                     , MissingH
                      , GpxTrk2Rte
   default-language:    Haskell2010
 
@@ -34,6 +35,7 @@ test-suite GpxTrk2Rte-test
   hs-source-dirs:      test
   main-is:             Spec.hs
   build-depends:       base
+                     , HUnit
                      , GpxTrk2Rte
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
