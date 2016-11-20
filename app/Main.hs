@@ -2,30 +2,48 @@ module Main where
 
 import Text.XML.HXT.Core
 import Data.String.Utils
+import Data.List
+import System.Directory
+import System.Environment
 import Lib
 
-main :: IO ()
-main = do
---  res1 <- runX (plotTree "/home/funamoto/Brevet/BRM922_PC1_dcm.gpx" "BRM922_PC1_dcm.tree")
---  print res1
---  res2 <- runX (plotTree "/home/funamoto/Brevet/BRM922_PC1_rt.gpx"  "BRM922_PC1_tr.tree")
---  print res2
+sub _ _ [] = []
+sub x y str@(s:ss)
+    | isPrefixOf x str = y ++ drop (length x) str
+    | otherwise = s:sub x y ss
 
-  let doc = readDocument [withValidate no] "/home/funamoto/Brevet/BRM922_PC1.gpx"
+convert indir outdir trkfile = do
+  let trkpath = indir ++ "/" ++ trkfile
+      rtepath = outdir ++ "/" ++ (sub ".gpx" "_rt.gpx" trkfile)
 
-  nm <- runX (doc >>> getTrkName)
-  ts <- runX (doc >>> getTrkSeg)
+  let doc = readDocument [withValidate no] trkpath
 
-  let name = strip $ nm!!0
-      trks = map tplToTrkPt ts
-      rtes = trkPtToRtePt trks
-      decs = deci 250 rtes
+  nm <- runX (doc >>> getTrkName) -- get name tree
+  ts <- runX (doc >>> getTrkSeg)  -- get trk segment
 
---  let xys  = map (\a -> (rteLat a, rteLon a) ) rtes
-  mapM_ print decs
-      
+  let name = strip $ nm!!0      -- trk name
+      trks = map tplToTrkPt ts  -- trk points
+      rtes = trkPtToRtePt trks  -- convert trk to rte
+      decs = deci 250 rtes      -- decimate
+
   runX (
         root [] [writeRte name decs]
         >>>
-        writeDocument [withIndent yes] "/home/funamoto/BRM922_PC1_rt.gpx")
+        writeDocument [withIndent yes] rtepath
+       )
   return ()
+
+main :: IO ()
+main = do
+
+  a <- getArgs
+  let indir  = a!!0 -- input directory
+      outdir = a!!1 -- output directory
+
+  f <- getDirectoryContents indir
+  let trkfiles = filter (isSuffixOf ".gpx") f -- grab '*.gpx' files
+--  mapM_ print trkfiles
+  mapM_ (convert indir outdir) trkfiles
+  
+
+
