@@ -97,6 +97,11 @@ writeRte name rts = mkelem "gpx"
 -- angle 
 angle :: (Double,Double) -> (Double,Double) -> Double
 angle (ax,ay) (bx,by) = ( (ax*bx + ay*by) / ( sqrt(ax*ax+ay*ay) * sqrt(bx*bx+by*by) ) )
+
+-- angle' : reciprocal of inner product
+angle' :: (Double,Double) -> (Double,Double) -> Double
+angle' (ax,ay) (bx,by) = 1.0 / (ax*bx + ay*by)
+
 -- metric : calculate nodes' importance. smaller the metric, less important 
 metric :: [RtePt] -> [(String,Double)]
 metric (p0:p1:p2:ps) =
