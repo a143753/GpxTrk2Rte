@@ -25,6 +25,7 @@ executable GpxTrk2Rte-exe
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
+                     , directory
                      , hxt
                      , MissingH
                      , GpxTrk2Rte
