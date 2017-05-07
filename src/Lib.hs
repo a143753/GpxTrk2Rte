@@ -8,6 +8,7 @@ module Lib
     , angle
     , metric
     , deci
+    , renum
     ) where
 
 import Text.XML.HXT.Core
@@ -140,3 +141,18 @@ deci n x
           met = minimumBy (\x y -> compare (snd x) (snd y) ) $ metric x
         in
           deci n $ drop' met x
+
+-- re-number points
+renum' :: Int -> [RtePt] -> [RtePt]
+renum' _ [] = []
+renum' n (x:xs) =
+  let nam = "No. " ++ show(n)
+      lat = rteLat x
+      lon = rteLon x
+      ele = rteEle x
+      x'  = RtePt nam lat lon ele
+  in
+    x':(renum' (n+1) xs)
+
+renum :: [RtePt] -> [RtePt]
+renum x = renum' 1 x
