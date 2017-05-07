@@ -72,7 +72,7 @@ getTrkSeg =
     ( getChildren >>> isElem >>> hasName "ele"  >>> getChildren >>> getText )
 
 -- make RTE document tree
-writeRte :: ArrowXml a => String -> [RtePt] -> a XmlTree XmlTree
+writeRte :: ArrowXml a => [String] -> [[RtePt]] -> a XmlTree XmlTree
 writeRte name rts = mkelem "gpx"
                [ sattr "version" "1.1"
                , sattr "creator" "GpxTrk2Rte"
@@ -80,20 +80,21 @@ writeRte name rts = mkelem "gpx"
                , sattr "xmlns:xsi" "http://www.w3.org/2001/XMLSchema-instance"
                , sattr "xsi:schemaLocation" "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.kashmir3d.com/namespace/kashmir3d http://www.kashmir3d.com/namespace/kashmir3d.xsd"
                ]
-               [ selem "rte"
-                 ([ selem "name"   [ txt name ]
-                  , selem "number" [ txt "1" ]
-                  ] ++ pts)
-               ]
+               rte
     where
+      rte = map (\(n,r,i) -> selem "rte"
+                             ([ selem "name" [ txt n ]
+                              , selem "number" [ txt (show i) ]
+                              ] ++ (pts r))
+                ) $ zip3 name rts [1..] 
       pts = map (\x -> mkelem "rtept"
-                       [ sattr "lat"   (show $ rteLat x)
-                       , sattr "lon"   (show $ rteLon x)
-                       ]
-                       [ selem "ele"   [ txt (show $ rteEle x) ]
-                       , selem "name"  [ txt (rteNam x) ]
-                       ]
-                ) rts
+                           [ sattr "lat"   (show $ rteLat x)
+                           , sattr "lon"   (show $ rteLon x)
+                           ]
+                           [ selem "ele"   [ txt (show $ rteEle x) ]
+                           , selem "name"  [ txt (rteNam x) ]
+                           ]
+                )
 
 -- angle 
 angle :: (Double,Double) -> (Double,Double) -> Double
