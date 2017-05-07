@@ -76,7 +76,8 @@ writeRte :: ArrowXml a => String -> [RtePt] -> a XmlTree XmlTree
 writeRte name rts = mkelem "gpx"
                [ sattr "version" "1.1"
                , sattr "creator" "GpxTrk2Rte"
-               , sattr "xmlns"   "http://www.topografix.com/GPX/1/1"
+               , sattr "xmlns" "http://www.topografix.com/GPX/1/1"
+               , sattr "xmlns:xsi" "http://www.w3.org/2001/XMLSchema-instance"
                , sattr "xsi:schemaLocation" "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.kashmir3d.com/namespace/kashmir3d http://www.kashmir3d.com/namespace/kashmir3d.xsd"
                ]
                [ selem "rte"
