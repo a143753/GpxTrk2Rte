@@ -33,7 +33,7 @@ convert split indir outdir trkfile = do
       trks = map tplToTrkPt ts  -- trk points
       rtes = trkPtToRtePt trks  -- convert trk to rte
       decs = deci (250*split) rtes  -- decimate
-      spts = map renum $ chunksOf 250 decs
+      spts = map renum $ chunksOf' 250 decs
 
   runX (
         root [] [writeRte name spts]

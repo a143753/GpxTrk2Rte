@@ -9,6 +9,7 @@ module Lib
     , metric
     , deci
     , renum
+    , chunksOf'
     ) where
 
 import Text.XML.HXT.Core
@@ -156,3 +157,12 @@ renum' n (x:xs) =
 
 renum :: [RtePt] -> [RtePt]
 renum x = renum' 1 x
+
+chunksOf' n x =
+  let p = take n x
+      r = drop n x
+      h = last p
+  in
+    if length(x) <= n
+    then [p]
+    else p:(chunksOf' n (h:r))
